@@ -1,0 +1,14 @@
+<div class="container-fluid">
+    <div *ngIf="history.length > 0" class="col-md-12">
+        <h2 class="justify-content-center">
+            Historique
+        </h2>
+        <hr>
+        <h6 *ngFor="let hs of history" style="display:inline;" (click)="NewSearch(hs)">
+            <a href="#">
+                {{hs}}
+            </a>
+            <br>
+        </h6>
+    </div>
+</div>

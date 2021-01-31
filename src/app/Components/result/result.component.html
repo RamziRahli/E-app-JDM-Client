@@ -1,0 +1,237 @@
+<div style="position: relative">
+	<ngx-ui-loader [loaderId]="'loader-01'"></ngx-ui-loader>
+</div>
+
+<div *ngIf="res">
+	<hr>
+	<div class="text-center" *ngIf="res.id != 0">
+		<p>
+			<b>
+				le terme
+			</b>:
+			{{ message }}
+		</p>
+		<p>
+			<b>id :
+				{{ res.id }}
+			</b>
+		</p>
+		<p>
+			<b>
+				poid
+			</b>:
+			{{res.poids}}
+		</p>
+	</div>
+
+	<div class="grid" id="myGroup">
+
+		<div class="row">
+
+			<div class="col-xs-3 mr-1 ml-2 mb-1" *ngIf="res.definition?.length > 0">
+				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo">Show
+					definitions</button>
+			</div>
+
+			<div class="col-xs-3 mr-1 ml-2 mb-1" *ngIf="res.rafDefinitions?.length > 0">
+				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo2">Raffinement
+					sémantique détécté</button>
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="accordion-group mr-1 ml-2 col-12">
+				<div *ngIf="res.rafDefinitions?.length > 0" id="demo2" data-parent="#myGroup"
+					class="collapse indent mt-2">
+					<ul class="list-group"
+						*ngFor="let raf_def of res.rafDefinitions | slice: (pageref-1) * pageSizeref : (pageref-1) * pageSizeref + pageSizeref">
+						<li class=" list-group-item">{{raf_def}}</li>
+					</ul>
+					<div class="col-12 justify-content-center mt-1">
+						<ngb-pagination [(page)]="pageref" [pageSize]="pageSizeref"
+							[collectionSize]="res.rafDefinitions.length"></ngb-pagination>
+					</div>
+				</div>
+
+				<div *ngIf="res.definition?.length > 0" id="demo" data-parent="#myGroup" class="collapse indent mt-2">
+					<ul class="list-group list-group-hover list-group-striped"
+						*ngFor="let def of res.definition | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+						<li class="list-group-item">{{def}}</li>
+					</ul>
+					<div class="col-12 justify-content-center mt-1">
+						<ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="res.definition.length">
+						</ngb-pagination>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr>
+
+	<div *ngIf="res.definition?.length <= 0 && res.rafDefinitions?.length <=0">
+		<div class="alert alert-primary">
+			<strong>Aucune définition trouvée !
+			</strong>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col" *ngIf="no_relout == false">
+			<div *ngIf="SortEmpty?.length == 0 || !SortEmpty; else noSort">
+				<div class="alert alert-primary">
+					<strong>Aucune relations sortantes trouvées !
+					</strong>
+				</div>
+			</div>
+			<div *ngIf="SortEmpty !== null && SortEmpty.length != 0">
+				<h2 class="justify-content-center">Relations Sortantes
+				</h2>
+				<hr>
+				<div class="myaccordion" (click)="oncollapse(event)" id="accordionExamples">
+
+					<div class="card mb-3" *ngFor="let relationName of res.mapSortantesNames; let j = index">
+						<div class="card-header" id="sheading_{{j}}">
+							<h2 class="mb-0">
+								<button class="d-flex align-items-center justify-content-between btn btn-link"
+									type="button" data-toggle="collapse" attr.data-target="#scollapse_{{j}}"
+									aria-expanded="false" attr.aria-controls="scollapse_{{j}}">
+									Relation :
+									{{relationName}}
+									: ({{res.mapSortantes[relationName].length}})
+									<span class="fa-stack fa-sm">
+										<i class="fa fa-circle fa-stack-2x"></i>
+										<i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+									</span>
+								</button>
+							</h2>
+						</div>
+
+						<div id="scollapse_{{j}}" class="collapse" attr.aria-labelledby="sheading_{{j}}"
+							data-parent="#accordionExamples">
+							<div class="card-body">
+								<table class="table table-hover">
+									<thead class="table-success">
+										<tr>
+											<th (click)="setOrder('noeud.nom',true)">
+												Terme
+												<span *ngIf="reverse && order === 'noeud.nom'">▼</span>
+												<span *ngIf="!reverse && order === 'noeud.nom'">▲</span>
+											</th>
+											<th (click)="setOrder('poids',true)">
+												Poids
+												<span *ngIf="reverse && order === 'poids'">▼</span>
+												<span *ngIf="!reverse && order === 'poids'">▲</span>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr
+											*ngFor="let relIn of res.mapSortantes[relationName] | slice:(pagesSortantes[relationName]-1) * 10 : (pagesSortantes[relationName]-1) * 10 + 10 | orderBy: order:reverse">
+											<td (click)="NewSearch(relIn.noeud.nom)">
+												<a href="#">{{relIn.noeud.nom}}
+												</a>
+											</td>
+											<td *ngIf="relIn.poids == 0" class="table-warning">{{relIn.poids}}</td>
+											<td *ngIf="relIn.poids > 0">{{relIn.poids}}</td>
+											<td *ngIf="relIn.poids < 0" class="table-danger">{{relIn.poids}}</td>
+
+										</tr>
+									</tbody>
+								</table>
+								<div class="justify-content-center">
+									<ngb-pagination [(page)]="pagesSortantes[relationName]" [pageSize]="10"
+										[collectionSize]="res.mapSortantes[relationName].length" [maxSize]="10">
+									</ngb-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<hr>
+
+
+		<div class="col" *ngIf="no_relin == false">
+			<div *ngIf="EnterEmpty?.length == 0 || !EnterEmpty; else noSort">
+				<div class="alert alert-primary">
+					<strong>Aucune relations entrantes trouvées !
+					</strong>
+				</div>
+			</div>
+			<div *ngIf="EnterEmpty !== null && EnterEmpty.length != 0">
+				<h2 class="justify-content-center">
+					Relations Entrantes</h2>
+				<hr>
+
+				<div class="myaccordion" (click)="oncollapse2(event)" id="accordionExamples2">
+					<div class="card mb-3" *ngFor="let relationName of res.mapEntrantesNames; let j = index">
+						<div class="card-header" id="heading_{{j}}">
+							<h2 class="mb-0">
+								<button class="d-flex align-items-center justify-content-between btn btn-link"
+									type="button" data-toggle="collapse" attr.data-target="#collapse_{{j}}"
+									aria-expanded="false" attr.aria-controls="collapse_{{j}}">
+									Relation :
+									{{relationName}}
+									: ({{res.mapEntrantes[relationName].length}})
+									<span class="fa-stack fa-sm">
+										<i class="fa fa-circle fa-stack-2x"></i>
+										<i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+									</span>
+								</button>
+							</h2>
+						</div>
+						<div id="collapse_{{j}}" class="collapse" attr.aria-labelledby="heading_{{j}}"
+							data-parent="#accordionExamples2">
+							<div class="card-body">
+								<table class="table table-hover">
+									<thead class="table-primary">
+										<tr>
+											<th (click)="setOrder('noeud.nom',false)">
+												Terme
+												<span
+													*ngIf="reverse_entrantes && order_entrantes === 'noeud.nom'">▼</span>
+												<span
+													*ngIf="!reverse_entrantes && order_entrantes === 'noeud.nom'">▲</span>
+											</th>
+											<th (click)="setOrder('poids',false)">
+												Poids
+												<span *ngIf="reverse_entrantes && order_entrantes === 'poids'">▼</span>
+												<span *ngIf="!reverse_entrantes && order_entrantes === 'poids'">▲</span>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr
+											*ngFor="let relIn of res.mapEntrantes[relationName] | slice: (pages[relationName]-1) * 10 : (pages[relationName]-1) * 10 + 10 | orderBy: order_entrantes:reverse_entrantes">
+											<td (click)="NewSearch(relIn.noeud.nom)">
+												<a href="#">{{relIn.noeud.nom}}</a>
+											</td>
+											<td *ngIf="relIn.poids == 0" class="table-warning">{{relIn.poids}}</td>
+											<td *ngIf="relIn.poids > 0">{{relIn.poids}}</td>
+											<td *ngIf="relIn.poids < 0" class="table-danger">{{relIn.poids}}</td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="justify-content-center">
+									<ngb-pagination [(page)]="pages[relationName]" [pageSize]="10"
+										[collectionSize]="res.mapEntrantes[relationName].length" [maxSize]="10">
+									</ngb-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="errorserver" class="alert alert-danger invisible">
+	<strong>
+		Erreur Server
+	</strong>
+</div>
