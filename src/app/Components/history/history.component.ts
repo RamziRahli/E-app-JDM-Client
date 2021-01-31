@@ -13,13 +13,11 @@ declare var $: any;
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-
   order: string = 'poids';
   order_entrantes: string = 'poids';
   reverse: boolean = true;
   reverse_entrantes: boolean = true;
   history: Array<string> = [];
-
 
   @Input() message: string;
   @Input() no_relout: boolean;

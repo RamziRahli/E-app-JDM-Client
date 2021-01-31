@@ -215,7 +215,7 @@
 	</div>
 
 	<div class="w-15">
-		<app-suggestion>
+		<app-suggestion (messageEvent)="receiveMessage($event)" [message]="message">
 		</app-suggestion>
 	</div>
 </div>

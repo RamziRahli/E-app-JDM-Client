@@ -20,7 +20,7 @@ export class ResultComponent implements OnInit {
   reverse: boolean = true;
   reverse_entrantes: boolean = true;
   history: Array<string> = [];
-
+  suggestion: Array<string> = [];
 
   @Input() message: string;
   @Input() no_relout: boolean;
@@ -93,7 +93,6 @@ export class ResultComponent implements OnInit {
   }
 
   Search(message, relation) {
-
     if (!this.history.some(x => x === message)) {
       this.history.unshift(this.message);
       localStorage.setItem('history', JSON.stringify(this.history));
@@ -134,7 +133,6 @@ export class ResultComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-
     //this.relation = changes['relation'].currentValue;
 
     if (changes['message'] !== undefined) {
@@ -142,12 +140,10 @@ export class ResultComponent implements OnInit {
       this.Search(this.message, this.relation);
     }
 
-
     if (changes['relation'] !== undefined && changes['message'] == undefined) {
       this.relation = changes['relation'].currentValue;
       this.Search(this.message, this.relation);
     }
-
   }
 
   setOrder(value: string, is_out: any) {
@@ -163,7 +159,6 @@ export class ResultComponent implements OnInit {
       }
       this.order_entrantes = value;
     }
-
   }
 
   NewSearch(mot: string) {
