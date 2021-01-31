@@ -4,7 +4,7 @@
             Suggestion
         </h2>
         <hr>
-        <h6 *ngFor="let sg of suggestion" style="display:inline;">
+        <h6 *ngFor="let sg of suggestion" style="display:inline;" (click)="NewSearch(sg)">
             <a href="#">
                 {{sg}}
             </a>
