@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class ServiceService {
 
   //Spring_API_SERVER = "http://localhost:8080/api";
-  Spring_API_SERVER = "https://e-app-jdm-server.herokuapp.com";
+  Spring_API_SERVER = "https://e-app-jdm-server.herokuapp.com/api";
   constructor(private httpClient: HttpClient) { }
 
   getMot(Mot: string, relation: string): Observable<Mot> {
